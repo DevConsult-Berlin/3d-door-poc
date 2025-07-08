@@ -26,62 +26,60 @@ controls.update();
 
 const loader = new GLTFLoader();
 
-loader.load('tests2.glb', function (gltf) {
-    const model = gltf.scene;
-    scene.add(model);
+let tuer = null;
+let glass = null;
+let klinke = null;
 
-    // traverse, um den echten Namen zu finden
-    let cone = null;
-    let glass = null;
-    let tür = null;
-    let main = null;
-    model.traverse((child) => {
+loader.load('tür.glb', (gltf) => {
+    tuer = gltf.scene;
+    scene.add(tuer);
+    tuer.traverse((child) => {
         if (child.isMesh) {
             console.log(child.name);
-            if (child.name === "klinke") {
-                cone = child;
-                cone.visible = true; // standardmäßig ausblenden
-            }
-            if(child.name === "Cube002"){
-                glass = child;
-                glass.visible = false;
-            }
-            if(child.name === "Cube002_1"){
-                tür = child;
-                tür.visible = false;
-            }
-            if(child.name === "Cube"){
-                main = child;
-                main.visible = true;
-            }
         }
     });
-
-    // Button für sichtbarkeit
-    document.getElementById("showCone").addEventListener("click", () => {
-        if (cone) {
-            cone.visible = !cone.visible;
-        }
-    });
-
-    document.getElementById("showGlass").addEventListener("click", () => {
-        if(glass){
-            glass.visible = !glass.visible;
-            tür.visible = !tür.visible;
-            main.visible = !main.visible;
-        }
-    });
-    // document.addEventListener("keydown", (event) => {
-    //     if (event.key === "c" || event.key === "C") {
-    //         if (cone) {
-    //             cone.visible = !cone.visible;
-    //             glass.visible = !glass.visible;
-    //             tür.visible = !tür.visible;
-    //         }
-    //     }
-    // });
-
+    tuer.visible = true;
 });
+
+loader.load('klinke.glb', (gltf) => {
+    klinke = gltf.scene;
+    scene.add(klinke);
+    klinke.traverse((c) => {
+        if(c.isMesh) console.log(c.name);
+    });
+    klinke.visible = false;
+});
+
+loader.load('glass.glb', (gltf) => {
+    glass = gltf.scene;
+    scene.add(glass);
+    glass.traverse((c) => {
+        if(c.isMesh) console.log(c.name);
+    });
+    glass.visible = false;
+});
+
+document.getElementById("showTuer").addEventListener("click", () => {
+    if (tuer && glass && klinke) {
+        tuer.visible = true;
+        glass.visible = false;
+    }
+});
+
+document.getElementById("showGlass").addEventListener("click", () => {
+    if (tuer && glass && klinke) {
+        tuer.visible = false;
+        glass.visible = true;
+    }
+});
+
+document.getElementById("showKlinke").addEventListener("click", () => {
+    if (klinke) {
+        klinke.visible = !klinke.visible;
+    }
+});
+
+
 function animate(t = 0) {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
