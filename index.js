@@ -29,7 +29,10 @@ const loader = new GLTFLoader();
 let tuer = null;
 let glass = null;
 let klinke = null;
+let scheibe = null;
 const models = [];
+const parent = new THREE.Object3D();
+const child = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
 
 loader.load('tür.glb', (gltf) => {
     scene.add(gltf.scene);
@@ -60,14 +63,17 @@ loader.load('glass.glb', (gltf) => {
     gltf.scene.traverse((c) => {
         if (c.isMesh) {
             console.log(c.name);
-            if (c.name === "glass_2") {
+            if (c.name === "Cube_1") {
                 glass = c;
+            }
+            if(c.name === "Cube_2"){
+                scheibe = c;
             }
         }
     });
     gltf.scene.traverse(function(n) {
         if(n.isMesh){
-            if(n.name === "glass_2")
+            if(n.name === "Cube_1")
             n.material = new THREE.MeshStandardMaterial({color: 0xccff })
         }
     });
@@ -80,7 +86,18 @@ document.getElementById("showGlass").addEventListener("click", () => change(1));
 
 document.getElementById("showKlinke").addEventListener("click", () => {
     if (klinke) {
+        // if(tuer)
+        // if (klinke.parent) {
+        //     klinke.parent.remove(klinke);
+        // }
+        
         klinke.visible = !klinke.visible;
+        // if(tuer.visible){
+        //     tuer.add(klinke);
+        // }
+        // if(glass.visible){
+        //     glass.add(klinke);
+        // }
     }
 });
 
@@ -99,6 +116,24 @@ document.getElementById("colorPicker").addEventListener("input", (event) => {
         tuer.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
     }
 });
+const slider = document.getElementById("widthSlider");
+const span = document.getElementById("widthValue");
+slider.addEventListener("input", (event) => {
+    const value = parseFloat(event.target.value);
+    span.textContent = slider.value;
+    console.log(tuer.scale, glass.scale);
+
+    if (glass) {
+        glass.scale.x = value;
+        scheibe.scale.x = value;
+        klinke.position.x = value - 2;
+    }
+    if(tuer){
+        tuer.scale.x = value;
+        klinke.position.x = value - 0.85;
+    }
+});
+
 
 
 function animate(t = 0) {
