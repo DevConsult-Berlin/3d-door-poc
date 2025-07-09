@@ -29,13 +29,17 @@ const loader = new GLTFLoader();
 let tuer = null;
 let glass = null;
 let klinke = null;
+const models = [];
 
 loader.load('tür.glb', (gltf) => {
-    tuer = gltf.scene;
-    scene.add(tuer);
-    tuer.traverse((child) => {
+    scene.add(gltf.scene);
+    models.push(gltf.scene);
+    gltf.scene.traverse((child) => {
         if (child.isMesh) {
             console.log(child.name);
+            if(child.name === "Cube"){
+                tuer = child;
+            }
         }
     });
     tuer.visible = true;
@@ -45,37 +49,54 @@ loader.load('klinke.glb', (gltf) => {
     klinke = gltf.scene;
     scene.add(klinke);
     klinke.traverse((c) => {
-        if(c.isMesh) console.log(c.name);
+        if (c.isMesh) console.log(c.name);
     });
     klinke.visible = false;
 });
 
 loader.load('glass.glb', (gltf) => {
-    glass = gltf.scene;
-    scene.add(glass);
-    glass.traverse((c) => {
-        if(c.isMesh) console.log(c.name);
+    scene.add(gltf.scene);
+    models.push(gltf.scene);
+    gltf.scene.traverse((c) => {
+        if (c.isMesh) {
+            console.log(c.name);
+            if (c.name === "glass_2") {
+                glass = c;
+            }
+        }
     });
-    glass.visible = false;
+    gltf.scene.traverse(function(n) {
+        if(n.isMesh){
+            if(n.name === "glass_2")
+            n.material = new THREE.MeshStandardMaterial({color: 0xccff })
+        }
+    });
+    gltf.scene.visible = false;
 });
 
-document.getElementById("showTuer").addEventListener("click", () => {
-    if (tuer && glass && klinke) {
-        tuer.visible = true;
-        glass.visible = false;
-    }
-});
+document.getElementById("showTuer").addEventListener("click", () => change(0));
 
-document.getElementById("showGlass").addEventListener("click", () => {
-    if (tuer && glass && klinke) {
-        tuer.visible = false;
-        glass.visible = true;
-    }
-});
+document.getElementById("showGlass").addEventListener("click", () => change(1));
 
 document.getElementById("showKlinke").addEventListener("click", () => {
     if (klinke) {
         klinke.visible = !klinke.visible;
+    }
+});
+
+function change(ind){
+    models.forEach((m, i) => {
+        m.visible = (i === ind);
+    });
+}
+
+document.getElementById("colorPicker").addEventListener("input", (event) => {
+    const hexColor = event.target.value;
+    if (glass && glass.material) {
+        glass.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
+    }
+    if(tuer && tuer.material){
+        tuer.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
     }
 });
 

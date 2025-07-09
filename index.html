@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Getting Started with Three.js</title>
-    <style>
-      body {
-        margin: 0;
-      }
-    </style>
-    <script type="importmap">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started with Three.js</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    #controlPanel {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #aaa;
+    }
+
+    #controlPanel h2 {
+      margin-top: 0;
+    }
+
+    #controlPanel button,
+    #controlPanel input[type="color"] {
+      margin: 5px 5px 5px 0;
+    }
+  </style>
+  <script type="importmap">
 			{
 				"imports": {
 					"three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
@@ -17,11 +38,19 @@
         }
 			}
 		</script>
-  </head>
-  <body>
+</head>
+
+<body>
+  <div id="controlPanel">
+    <h2>Tür auswahl</h2>
     <button id="showTuer">Show tür</button>
     <button id="showGlass">show Glass Tür</button>
     <button id="showKlinke">show Klinke</button>
-    <script type="module" src="index.js"></script>
-  </body>
+    <input type="color" id="colorPicker" value="#ff0000">
+    <label for="colorPicker">Tür-Farbe auswählen</label>
+  </div>
+
+  <script type="module" src="index.js"></script>
+</body>
+
 </html>
