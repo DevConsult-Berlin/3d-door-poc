@@ -139,7 +139,7 @@ $("#mySlider").roundSlider({
     radius: 100,
     min: 0,
     max: 180,
-    value: 45,
+    value: 135,
     circleShape: "full",
     startAngle: 0,
     handleShape: "round",
@@ -151,7 +151,7 @@ $("#mySlider").roundSlider({
 
 
 function updateLight(e) {
-    const angleDeg = e.value;
+    const angleDeg = e.value - 90;
     const angleRad = angleDeg * (Math.PI / 90);
 
     dirLight.position.x = 2 * Math.cos(angleRad);
