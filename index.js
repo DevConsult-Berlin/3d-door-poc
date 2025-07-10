@@ -27,12 +27,9 @@ controls.update();
 const loader = new GLTFLoader();
 
 let tuer = null;
-let glass = null;
 let klinke = null;
-let scheibe = null;
+let glass = null;
 const models = [];
-const parent = new THREE.Object3D();
-const child = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
 
 loader.load('tür.glb', (gltf) => {
     scene.add(gltf.scene);
@@ -45,7 +42,7 @@ loader.load('tür.glb', (gltf) => {
             }
         }
     });
-    tuer.visible = true;
+    gltf.scene.visible = true;
 });
 
 loader.load('klinke.glb', (gltf) => {
@@ -56,29 +53,20 @@ loader.load('klinke.glb', (gltf) => {
     });
     klinke.visible = false;
 });
-
-loader.load('glass.glb', (gltf) => {
+loader.load("tür-glass.glb", (gltf) => {
     scene.add(gltf.scene);
     models.push(gltf.scene);
-    gltf.scene.traverse((c) => {
-        if (c.isMesh) {
-            console.log(c.name);
-            if (c.name === "Cube_1") {
-                glass = c;
+
+    gltf.scene.traverse((child) => {
+        if (child.isMesh) {
+            console.log(child.name);
+            if(child.name === "Cube"){
+                glass = child;
             }
-            if(c.name === "Cube_2"){
-                scheibe = c;
-            }
-        }
-    });
-    gltf.scene.traverse(function(n) {
-        if(n.isMesh){
-            if(n.name === "Cube_1")
-            n.material = new THREE.MeshStandardMaterial({color: 0xccff })
         }
     });
     gltf.scene.visible = false;
-});
+})
 
 document.getElementById("showTuer").addEventListener("click", () => change(0));
 
@@ -86,18 +74,8 @@ document.getElementById("showGlass").addEventListener("click", () => change(1));
 
 document.getElementById("showKlinke").addEventListener("click", () => {
     if (klinke) {
-        // if(tuer)
-        // if (klinke.parent) {
-        //     klinke.parent.remove(klinke);
-        // }
-        
+
         klinke.visible = !klinke.visible;
-        // if(tuer.visible){
-        //     tuer.add(klinke);
-        // }
-        // if(glass.visible){
-        //     glass.add(klinke);
-        // }
     }
 });
 
@@ -109,29 +87,30 @@ function change(ind){
 
 document.getElementById("colorPicker").addEventListener("input", (event) => {
     const hexColor = event.target.value;
-    if (glass && glass.material) {
+    if(glass && glass.material){
         glass.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
     }
     if(tuer && tuer.material){
         tuer.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
     }
 });
+
 const slider = document.getElementById("widthSlider");
 const span = document.getElementById("widthValue");
+
 slider.addEventListener("input", (event) => {
     const value = parseFloat(event.target.value);
     span.textContent = slider.value;
-    console.log(tuer.scale, glass.scale);
 
-    if (glass) {
+    if(glass){
         glass.scale.x = value;
-        scheibe.scale.x = value;
-        klinke.position.x = value - 2;
+        
     }
     if(tuer){
         tuer.scale.x = value;
-        klinke.position.x = value - 0.85;
+        
     }
+    klinke.position.x = tuer.scale.x - 0.85;
 });
 
 
