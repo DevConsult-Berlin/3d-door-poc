@@ -20,6 +20,9 @@
       padding: 10px;
       border-radius: 8px;
       box-shadow: 0 0 10px #aaa;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     #controlPanel h2 {
@@ -29,6 +32,13 @@
     #controlPanel button,
     #controlPanel input[type="color"] {
       margin: 5px 5px 5px 0;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
     }
   </style>
   <script type="importmap">
@@ -43,19 +53,28 @@
 
 <body>
   <div id="controlPanel">
-    <h2>Tür auswahl</h2>
-    <button id="showTuer">Show tür</button>
-    <button id="showGlass">show Glass Tür</button>
-    <button id="showKlinke">show Klinke</button>
-    <button id="showDoor">show Door</button>
-    <button id="showHandle">show Handle of Door</button>
-    <button id="showPlane">show Plane</button>
+    <h2>Tür Auswahl</h2>
+    <div class="button-group">
+      <strong>Tür Modelle</strong>
+      <button id="showTuer">Show Tür (V1)</button>
+      <button id="showGlass">Show Glass Tür (V2)</button>
+      <button id="showDoor">Show Door (V3)</button>
+    </div>
+    <div class="button-group">
+      <strong>Klinke &amp; Handle</strong>
+      <button id="showKlinke">Show Klinke </button>
+      <button id="showHandle">Show Klinke Master Door</button>
+    </div>
+    <div class="button-group">
+      <strong>Sonstiges</strong>
+      <button id="showPlane">Show Hauswand-Bild</button>
+    </div>
     <input type="color" id="colorPicker" value="#ff0000">
     <label for="colorPicker">Tür-Farbe auswählen</label>
     <br><br>
     <label for="widthSlider">Tür-Breite:</label>
     <input type="range" id="widthSlider" min="0.5" max="3" step="0.1" value="0.8">
-    <span id="widthValue">Score</span>
+    <span id="widthValue">Schatten-Winkel</span>
 
     <div id="mySlider"></div>
 
