@@ -34,7 +34,10 @@ const loader = new GLTFLoader();
 let tuer = null;
 let klinke = null;
 let glass = null;
+const handles = [];
 const models = [];
+const doorParts = [];
+let bild = null;
 
 const planeGeometry = new THREE.PlaneGeometry(100, 100);
 const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x999999 });
@@ -60,7 +63,7 @@ loader.load('tür.glb', (gltf) => {
         }
     });
 
-    gltf.scene.visible = true;
+    gltf.scene.visible = false;
 });
 
 loader.load('klinke.glb', (gltf) => {
@@ -88,20 +91,74 @@ loader.load("tür-glass.glb", (gltf) => {
         }
     });
     gltf.scene.visible = false;
-})
+});
 
-document.getElementById("showTuer").addEventListener("click", () => change(0));
+loader.load("door.glb", (gltf) => {
+    scene.add(gltf.scene);
+    models.push(gltf.scene);
+    gltf.scene.traverse((child) => {
+        if (child.isMesh) {
+            console.log(child.name);
 
-document.getElementById("showGlass").addEventListener("click", () => change(1));
+            child.castShadow = true;
+            child.receiveShadow = true;
+            if (["Cube_1", "Cube_2", "Cube001", "Cube002", "Cube003"].includes(child.name)) {
+                doorParts.push(child);
+            }
+            if (["handle1", "handle2"].includes(child.name)) {
+                child.visible = false;
+                handles.push(child);
+            }
+        }
+    });
+    gltf.scene.visible = true;
+});
+
+const textureLoader = new THREE.TextureLoader();
+
+textureLoader.load(
+    'hintergrund.png',
+    function (texture) {
+        const planeGeometry = new THREE.PlaneGeometry(5, 3); // Breite, Höhe anpassen
+        const planeMaterial = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.DoubleSide
+        });
+        const backgroundPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        backgroundPlane.rotation.y = Math.PI/2;
+        backgroundPlane.position.set(0, 0.38, -0.5); // Beispiel: hinter der Tür platzieren
+        scene.add(backgroundPlane);
+        bild = backgroundPlane;
+        bild.visible = false;
+        models.push(bild);
+    },
+    undefined,
+    function (err) {
+        console.error("Fehler beim Laden der Hintergrund-Textur:", err);
+    }
+);
+
+
+
+document.getElementById("showTuer").addEventListener("click", () => doVisible(0));
+
+document.getElementById("showGlass").addEventListener("click", () => doVisible(1));
 
 document.getElementById("showKlinke").addEventListener("click", () => {
     if (klinke) {
-
         klinke.visible = !klinke.visible;
     }
 });
 
-function change(ind) {
+document.getElementById("showDoor").addEventListener("click", () => doVisible(2));
+
+document.getElementById("showHandle").addEventListener("click", () => {
+    handles.forEach((c) => {
+        c.visible = !c.visible;
+    })
+});
+
+function doVisible(ind) {
     models.forEach((m, i) => {
         m.visible = (i === ind);
     });
@@ -110,11 +167,21 @@ function change(ind) {
 document.getElementById("colorPicker").addEventListener("input", (event) => {
     const hexColor = event.target.value;
     if (glass && glass.material) {
-        glass.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
+        glass.material.color.set(hexColor);
     }
     if (tuer && tuer.material) {
-        tuer.material = new THREE.MeshStandardMaterial({ color: hexColor, metalness: 0, roughness: 1 });
+        tuer.material.color.set(hexColor);
     }
+    doorParts.forEach((m) => {
+        if (m.material) {
+            m.material.color.set(hexColor);
+        }
+    });
+
+});
+
+document.getElementById("showPlane").addEventListener("click" , () => {
+    bild.visible = !bild.visible;
 });
 
 const slider = document.getElementById("widthSlider");
