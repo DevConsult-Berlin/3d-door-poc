@@ -8,8 +8,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 7;
-camera.position.y = 7;
+camera.position.z = 5;
+camera.position.y = 2;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -38,6 +38,11 @@ const handles = [];
 const models = [];
 const doorParts = [];
 let bild = null;
+let mittlereSchloss = null;
+let obereSchloss = null;
+let mittelstueck = null;
+let originalGlassMat = null;
+let originalDoorMat = null;
 
 const planeGeometry = new THREE.PlaneGeometry(100, 100);
 const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x999999 });
@@ -63,7 +68,7 @@ loader.load('tür.glb', (gltf) => {
         }
     });
 
-    gltf.scene.visible = false;
+    gltf.scene.visible = true;
 });
 
 loader.load('klinke.glb', (gltf) => {
@@ -93,7 +98,7 @@ loader.load("tür-glass.glb", (gltf) => {
     gltf.scene.visible = false;
 });
 
-loader.load("door.glb", (gltf) => {
+loader.load("door1.glb", (gltf) => {
     scene.add(gltf.scene);
     models.push(gltf.scene);
     gltf.scene.traverse((child) => {
@@ -102,16 +107,33 @@ loader.load("door.glb", (gltf) => {
 
             child.castShadow = true;
             child.receiveShadow = true;
-            if (["Cube_1", "Cube_2", "Cube001", "Cube002", "Cube003"].includes(child.name)) {
+            if (["Cube001_1", "Cube001_2", "Cube001", "Cube002", "Cube003"].includes(child.name)) {
                 doorParts.push(child);
             }
             if (["handle1", "handle2"].includes(child.name)) {
                 child.visible = false;
                 handles.push(child);
             }
+            if(["lock2"].includes(child.name)){
+                mittlereSchloss = child;
+                child.visible = false;
+            }
+            if(["lock1"].includes(child.name)){
+                child.visible = false;
+                obereSchloss = child;
+            }
+            if("Cube001_1" === child.name){
+                originalDoorMat = child.material;
+            }
+            if("Cube001_2" === child.name){
+                originalGlassMat = child.material;
+                mittelstueck = child;
+                mittelstueck.material = originalDoorMat;
+            }
         }
     });
-    gltf.scene.visible = true;
+
+    gltf.scene.visible = false;
 });
 
 const textureLoader = new THREE.TextureLoader();
@@ -119,18 +141,17 @@ const textureLoader = new THREE.TextureLoader();
 textureLoader.load(
     'hintergrund.png',
     function (texture) {
-        const planeGeometry = new THREE.PlaneGeometry(5, 3); // Breite, Höhe anpassen
-        const planeMaterial = new THREE.MeshBasicMaterial({
+        const planeGeo = new THREE.PlaneGeometry(5, 3); // Breite, Höhe anpassen
+        const planeMat = new THREE.MeshBasicMaterial({
             map: texture,
             side: THREE.DoubleSide
         });
-        const backgroundPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        const backgroundPlane = new THREE.Mesh(planeGeo, planeMat);
         backgroundPlane.rotation.y = Math.PI/2;
         backgroundPlane.position.set(0, 0.38, -0.5); // Beispiel: hinter der Tür platzieren
         scene.add(backgroundPlane);
         bild = backgroundPlane;
         bild.visible = false;
-        models.push(bild);
     },
     undefined,
     function (err) {
@@ -181,7 +202,25 @@ document.getElementById("colorPicker").addEventListener("input", (event) => {
 });
 
 document.getElementById("showPlane").addEventListener("click" , () => {
-    bild.visible = !bild.visible;
+    if(bild){
+        bild.visible = !bild.visible;
+    }
+});
+
+document.getElementById("showMitSchloss").addEventListener("click", () => {
+    if(mittlereSchloss){
+        mittlereSchloss.visible = !mittlereSchloss.visible;
+    }
+});
+document.getElementById("showObSchloss").addEventListener("click", () => {
+    if(obereSchloss){
+        obereSchloss.visible = !obereSchloss.visible;
+    }
+});
+document.getElementById("showMittelStueck").addEventListener("click", () => {
+    if(mittelstueck && originalDoorMat && originalGlassMat){
+        mittelstueck.material = mittelstueck.material === originalDoorMat ? originalGlassMat : originalDoorMat;
+    }
 });
 
 const slider = document.getElementById("widthSlider");
