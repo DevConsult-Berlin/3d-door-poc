@@ -52,52 +52,6 @@ plane.position.y = -2;
 plane.receiveShadow = true;
 scene.add(plane);
 
-loader.load('tür.glb', (gltf) => {
-    scene.add(gltf.scene);
-    models.push(gltf.scene);
-    gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-            console.log(child.name);
-
-            child.castShadow = true;
-            child.receiveShadow = true;
-
-            if (child.name === "Cube") {
-                tuer = child;
-            }
-        }
-    });
-
-    gltf.scene.visible = true;
-});
-
-loader.load('klinke.glb', (gltf) => {
-    klinke = gltf.scene;
-    scene.add(klinke);
-    klinke.traverse((c) => {
-        if (c.isMesh) console.log(c.name);
-    });
-    klinke.visible = false;
-});
-loader.load("tür-glass.glb", (gltf) => {
-    scene.add(gltf.scene);
-    models.push(gltf.scene);
-
-    gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-            console.log(child.name);
-
-            child.castShadow = true;
-            child.receiveShadow = true;
-
-            if (child.name === "Cube") {
-                glass = child;
-            }
-        }
-    });
-    gltf.scene.visible = false;
-});
-
 loader.load("door1.glb", (gltf) => {
     scene.add(gltf.scene);
     models.push(gltf.scene);
@@ -132,8 +86,8 @@ loader.load("door1.glb", (gltf) => {
             }
         }
     });
-
-    gltf.scene.visible = false;
+    gltf.scene.rotation.y = -Math.PI/2;
+    gltf.scene.visible = true;
 });
 
 const textureLoader = new THREE.TextureLoader();
@@ -159,19 +113,7 @@ textureLoader.load(
     }
 );
 
-
-
-document.getElementById("showTuer").addEventListener("click", () => doVisible(0));
-
-document.getElementById("showGlass").addEventListener("click", () => doVisible(1));
-
-document.getElementById("showKlinke").addEventListener("click", () => {
-    if (klinke) {
-        klinke.visible = !klinke.visible;
-    }
-});
-
-document.getElementById("showDoor").addEventListener("click", () => doVisible(2));
+document.getElementById("showDoor").addEventListener("click", () => doVisible(0));
 
 document.getElementById("showHandle").addEventListener("click", () => {
     handles.forEach((c) => {
