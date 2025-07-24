@@ -95,14 +95,13 @@ const textureLoader = new THREE.TextureLoader();
 textureLoader.load(
     'hintergrund.png',
     function (texture) {
-        const planeGeo = new THREE.PlaneGeometry(5, 3); // Breite, Höhe anpassen
+        const planeGeo = new THREE.PlaneGeometry(5, 3);
         const planeMat = new THREE.MeshBasicMaterial({
             map: texture,
             side: THREE.DoubleSide
         });
         const backgroundPlane = new THREE.Mesh(planeGeo, planeMat);
-        backgroundPlane.rotation.y = Math.PI/2;
-        backgroundPlane.position.set(0, 0.38, -0.5); // Beispiel: hinter der Tür platzieren
+        backgroundPlane.position.set(0.5, 0.1, -0.05);
         scene.add(backgroundPlane);
         bild = backgroundPlane;
         bild.visible = false;
