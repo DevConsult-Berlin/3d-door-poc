@@ -107,7 +107,7 @@ loader.load("door1.glb", (gltf) => {
 
             child.castShadow = true;
             child.receiveShadow = true;
-            if (["Cube001_1", "Cube001_2", "Cube001", "Cube002", "Cube003"].includes(child.name)) {
+            if (["Cube_1", "Cube_2", "Cube001", "Cube002", "Cube003"].includes(child.name)) {
                 doorParts.push(child);
             }
             if (["handle1", "handle2"].includes(child.name)) {
@@ -122,10 +122,10 @@ loader.load("door1.glb", (gltf) => {
                 child.visible = false;
                 obereSchloss = child;
             }
-            if("Cube001_1" === child.name){
+            if("Cube_1" === child.name){
                 originalDoorMat = child.material;
             }
-            if("Cube001_2" === child.name){
+            if("Cube_2" === child.name){
                 originalGlassMat = child.material;
                 mittelstueck = child;
                 mittelstueck.material = originalDoorMat;
