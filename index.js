@@ -31,19 +31,19 @@ controls.update();
 
 const loader = new GLTFLoader();
 
-let tuer = null;
-let klinke = null;
-let glass = null;
-const handles = [];
-let door = null;
-const doorParts = [];
+const handles1 = [];
+const handles2 = [];
+const doorParts1 = [];
 let bild = null;
-let mittlereSchloss = null;
-let obereSchloss = null;
-let mittelstueck = null;
+let mittlereSchloss1 = null;
+let mittlereSchloss2 = null;
+let obereSchloss1 = null;
+let mittelstueck1 = null;
+let mittelstueck2 = null;
 let originalGlassMat = null;
-let originalDoorMat = null;
-let door2 = null;
+let doorMat1 = null;
+let originalDoorMat1 = null;
+let originalDoorMat2 = null;
 const doors = [];
 
 const planeGeometry = new THREE.PlaneGeometry(100, 100);
@@ -56,7 +56,6 @@ scene.add(plane);
 
 loader.load("door1.glb", (gltf) => {
     scene.add(gltf.scene);
-    door = gltf.scene;
     doors[0] = gltf.scene;
     gltf.scene.traverse((child) => {
         if (child.isMesh) {
@@ -65,31 +64,31 @@ loader.load("door1.glb", (gltf) => {
             child.castShadow = true;
             child.receiveShadow = true;
             if (["Cube_1", "Cube_2", "Cube001", "Cube002", "Cube003"].includes(child.name)) {
-                doorParts.push(child);
+                doorParts1.push(child);
             }
             if (["handle1", "handle2"].includes(child.name)) {
                 child.visible = false;
-                handles.push(child);
+                handles1.push(child);
             }
-            if(["lock2"].includes(child.name)){
-                mittlereSchloss = child;
+            if (["lock2"].includes(child.name)) {
+                mittlereSchloss1 = child;
                 child.visible = false;
             }
-            if(["lock1"].includes(child.name)){
+            if (["lock1"].includes(child.name)) {
                 child.visible = false;
-                obereSchloss = child;
+                obereSchloss1 = child;
             }
-            if("Cube_1" === child.name){
-                originalDoorMat = child.material;
+            if ("Cube_1" === child.name) {
+                originalDoorMat1 = child.material;
             }
-            if("Cube_2" === child.name){
+            if ("Cube_2" === child.name) {
                 originalGlassMat = child.material;
-                mittelstueck = child;
-                mittelstueck.material = originalDoorMat;
+                mittelstueck1 = child;
+                mittelstueck1.material = originalDoorMat1;
             }
         }
     });
-    gltf.scene.rotation.y = -Math.PI/2;
+    gltf.scene.rotation.y = -Math.PI / 2;
     gltf.scene.visible = true;
 });
 
@@ -97,13 +96,30 @@ loader.load("door2-1.glb", (gltf) => {
     scene.add(gltf.scene);
     doors[1] = gltf.scene;
     gltf.scene.traverse((child) => {
-        if(child.isMesh){
-            console.log("Door 2: ",child.name);
+        if (child.isMesh) {
+            console.log("Door 2: ", child.name);
+            child.castShadow = true;
+            child.receiveShadow = true;
+            if (["Cube005", "Cube006"].includes(child.name)) {
+                child.visible = false;
+                handles2.push(child);
+            }
+            if (child.name === "Cube007") {
+                child.visible = false;
+                mittlereSchloss2 = child;
+            }
+            if("Cube004_1" === child.name){
+                originalDoorMat2 = child.material;
+            }
+            if("Cube004_2" === child.name){
+                mittelstueck2 = child;
+                doorMat1 = child.material;
+                mittelstueck2.material = originalDoorMat2;
+            }
         }
     });
-    door2 = gltf.scene;
-    door2.visible = false;
-    door2.rotation.y = -Math.PI/2;
+    gltf.scene.visible = false;
+    gltf.scene.rotation.y = -Math.PI / 2;
 })
 
 const textureLoader = new THREE.TextureLoader();
@@ -128,9 +144,15 @@ textureLoader.load(
     }
 );
 
-function toggleVisibility(obj){
-    if(obj){
-        obj.visible = !obj.visible;
+function toggleVisibility(obj) {
+    if (typeof obj === "number") {
+        doors.forEach((d, i) => {
+            d.visible = (obj === i);
+        });
+    } else {
+        if(obj){
+            obj.visible = !obj.visible;
+        }
     }
 }
 function applyColor(objects, color) {
@@ -140,38 +162,37 @@ function applyColor(objects, color) {
         }
     });
 }
-function doorsVisibility(id){
-    console.log("doors[0]:", doors[0]);
-console.log("doors[1]:", doors[1]);
-
-    doors.forEach((d, i) =>{
-        d.visible = (id === i);
-    });
-}
 
 document.getElementById("colorPicker").addEventListener("input", (event) => {
     const hexColor = event.target.value;
-    doorParts.forEach((m) => {
+    doorParts1.forEach((m) => {
         if (m.material) {
             m.material.color.set(hexColor);
         }
     });
-    const allTargets = [doorParts];
+    const allTargets = [doorParts1];
     applyColor(allTargets, hexColor);
 
 });
 
 const toggleMap = {
-    showDoor: () => doorsVisibility(0),
-    showDoor2: () => doorsVisibility(1),
-    showHandle: () => handles,
+    showDoor: () => toggleVisibility(0),
+    showDoor2: () => toggleVisibility(1),
+    showHandle1: () => handles1,
+    showHandle2: () => handles2,
     showPlane: () => bild,
-    showMitSchloss: () => mittlereSchloss,
-    showObSchloss: () => obereSchloss,
-    showMittelStueck: () => {
-        if(mittelstueck && originalDoorMat && originalGlassMat){
-        mittelstueck.material = mittelstueck.material === originalDoorMat ? originalGlassMat : originalDoorMat;
-    }
+    showMitSchloss1: () => mittlereSchloss1,
+    showMitSchloss2: () => mittlereSchloss2,
+    showObSchloss: () => obereSchloss1,
+    showMittelStueck1: () => {
+        if (mittelstueck1 && originalDoorMat1 && originalGlassMat) {
+            mittelstueck1.material = mittelstueck1.material === originalDoorMat1 ? originalGlassMat : originalDoorMat1;
+        }
+    },
+    showMittelStueck2: () => {
+        if(mittelstueck2 && originalDoorMat2 && doorMat1){
+            mittelstueck2.material = mittelstueck2.material === originalDoorMat2 ? doorMat1 : originalDoorMat2;
+        }
     }
 };
 Object.entries(toggleMap).forEach(([id, getTarget]) => {
@@ -194,16 +215,6 @@ const span = document.getElementById("widthValue");
 slider.addEventListener("input", (event) => {
     const value = parseFloat(event.target.value);
     span.textContent = slider.value;
-
-    if (glass) {
-        glass.scale.x = value;
-
-    }
-    if (tuer) {
-        tuer.scale.x = value;
-
-    }
-    klinke.position.x = tuer.scale.x - 0.85;
 });
 
 $("#mySlider").roundSlider({
@@ -213,7 +224,7 @@ $("#mySlider").roundSlider({
     value: 135,
     circleShape: "full",
     startAngle: 0,
-    handleShape: "round",
+    handleS1hape: "round",
     width: 15,
     tooltip: "hide",
     change: updateLight,
