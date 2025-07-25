@@ -35,7 +35,7 @@ let tuer = null;
 let klinke = null;
 let glass = null;
 const handles = [];
-const models = [];
+let door = null;
 const doorParts = [];
 let bild = null;
 let mittlereSchloss = null;
@@ -43,6 +43,8 @@ let obereSchloss = null;
 let mittelstueck = null;
 let originalGlassMat = null;
 let originalDoorMat = null;
+let door2 = null;
+const doors = [];
 
 const planeGeometry = new THREE.PlaneGeometry(100, 100);
 const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x999999 });
@@ -54,10 +56,11 @@ scene.add(plane);
 
 loader.load("door1.glb", (gltf) => {
     scene.add(gltf.scene);
-    models.push(gltf.scene);
+    door = gltf.scene;
+    doors[0] = gltf.scene;
     gltf.scene.traverse((child) => {
         if (child.isMesh) {
-            console.log(child.name);
+            console.log("Door 1: ", child.name);
 
             child.castShadow = true;
             child.receiveShadow = true;
@@ -90,6 +93,19 @@ loader.load("door1.glb", (gltf) => {
     gltf.scene.visible = true;
 });
 
+loader.load("door2-1.glb", (gltf) => {
+    scene.add(gltf.scene);
+    doors[1] = gltf.scene;
+    gltf.scene.traverse((child) => {
+        if(child.isMesh){
+            console.log("Door 2: ",child.name);
+        }
+    });
+    door2 = gltf.scene;
+    door2.visible = false;
+    door2.rotation.y = -Math.PI/2;
+})
+
 const textureLoader = new THREE.TextureLoader();
 
 textureLoader.load(
@@ -112,58 +128,66 @@ textureLoader.load(
     }
 );
 
-document.getElementById("showDoor").addEventListener("click", () => doVisible(0));
+function toggleVisibility(obj){
+    if(obj){
+        obj.visible = !obj.visible;
+    }
+}
+function applyColor(objects, color) {
+    objects.forEach(obj => {
+        if (obj?.material) {
+            obj.material.color.set(color);
+        }
+    });
+}
+function doorsVisibility(id){
+    console.log("doors[0]:", doors[0]);
+console.log("doors[1]:", doors[1]);
 
-document.getElementById("showHandle").addEventListener("click", () => {
-    handles.forEach((c) => {
-        c.visible = !c.visible;
-    })
-});
-
-function doVisible(ind) {
-    models.forEach((m, i) => {
-        m.visible = (i === ind);
+    doors.forEach((d, i) =>{
+        d.visible = (id === i);
     });
 }
 
 document.getElementById("colorPicker").addEventListener("input", (event) => {
     const hexColor = event.target.value;
-    if (glass && glass.material) {
-        glass.material.color.set(hexColor);
-    }
-    if (tuer && tuer.material) {
-        tuer.material.color.set(hexColor);
-    }
     doorParts.forEach((m) => {
         if (m.material) {
             m.material.color.set(hexColor);
         }
     });
+    const allTargets = [doorParts];
+    applyColor(allTargets, hexColor);
 
 });
 
-document.getElementById("showPlane").addEventListener("click" , () => {
-    if(bild){
-        bild.visible = !bild.visible;
-    }
-});
-
-document.getElementById("showMitSchloss").addEventListener("click", () => {
-    if(mittlereSchloss){
-        mittlereSchloss.visible = !mittlereSchloss.visible;
-    }
-});
-document.getElementById("showObSchloss").addEventListener("click", () => {
-    if(obereSchloss){
-        obereSchloss.visible = !obereSchloss.visible;
-    }
-});
-document.getElementById("showMittelStueck").addEventListener("click", () => {
-    if(mittelstueck && originalDoorMat && originalGlassMat){
+const toggleMap = {
+    showDoor: () => doorsVisibility(0),
+    showDoor2: () => doorsVisibility(1),
+    showHandle: () => handles,
+    showPlane: () => bild,
+    showMitSchloss: () => mittlereSchloss,
+    showObSchloss: () => obereSchloss,
+    showMittelStueck: () => {
+        if(mittelstueck && originalDoorMat && originalGlassMat){
         mittelstueck.material = mittelstueck.material === originalDoorMat ? originalGlassMat : originalDoorMat;
     }
+    }
+};
+Object.entries(toggleMap).forEach(([id, getTarget]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("click", () => {
+        const target = getTarget();
+        if (typeof target === "function") {
+            target();
+        } else if (Array.isArray(target)) {
+            target.forEach(obj => toggleVisibility(obj));
+        } else {
+            toggleVisibility(target);
+        }
+    });
 });
-
 const slider = document.getElementById("widthSlider");
 const span = document.getElementById("widthValue");
 
