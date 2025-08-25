@@ -25,6 +25,21 @@
       gap: 16px;
     }
 
+    #passwordScreen {
+      display: flex;
+      justify-content: center;
+      background-color: white;
+      border-radius: 8px;
+      padding: 10px;
+      flex-direction: column;
+      gap: 16px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+    }
+
     #controlPanel h2 {
       margin-top: 0;
     }
@@ -40,6 +55,9 @@
       gap: 6px;
       margin-bottom: 8px;
     }
+    #controlPanel{
+      display: none;
+    }
   </style>
   <script type="importmap">
 			{
@@ -52,6 +70,11 @@
 </head>
 
 <body>
+  <div id="passwordScreen">
+    <input type="password" placeholder="123..." id="pass" />
+    <div id="message" style="color:red; font-size:14px; margin-top:6px;"></div>
+    <button id="passButton">Submit</button>
+  </div>
   <div id="controlPanel">
     <h2>Tür Auswahl</h2>
     <div class="button-group">
@@ -86,7 +109,8 @@
     <script src="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js"></script>
   </div>
 
-  <script type="module" src="index.js"></script>
+  <script type="module" src="index.js">
+  </script>
 </body>
 
 </html>
