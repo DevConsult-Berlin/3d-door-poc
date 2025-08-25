@@ -30,14 +30,62 @@
       justify-content: center;
       background-color: white;
       border-radius: 8px;
-      padding: 10px;
+      padding: 30px 40px;
       flex-direction: column;
       gap: 16px;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 300px;
+      max-width: 350px;
+      width: 100%;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    #passwordScreen h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #passwordScreen input {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    #passwordScreen input:focus {
+      border-color: #667eea;
+    }
+
+    #message {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+
+    #passwordScreen button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      background: #667eea;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #passwordScreen button:hover {
+      background: #5563c1;
+    }
+
+    #passwordScreen button:active {
+      transform: scale(0.98);
     }
 
     #controlPanel h2 {
@@ -55,7 +103,8 @@
       gap: 6px;
       margin-bottom: 8px;
     }
-    #controlPanel{
+
+    #controlPanel {
       display: none;
     }
   </style>
@@ -71,9 +120,10 @@
 
 <body>
   <div id="passwordScreen">
-    <input type="password" placeholder="123..." id="pass" />
-    <div id="message" style="color:red; font-size:14px; margin-top:6px;"></div>
-    <button id="passButton">Submit</button>
+    <h2>Diese Seite ist nicht öffentlich Verfügbar.<br> Bitte Passwort eingeben</h1>
+      <input type="password" placeholder="123..." id="pass" />
+      <div id="message" style="color:red; font-size:14px; margin-top:6px;"></div>
+      <button id="passButton">Submit</button>
   </div>
   <div id="controlPanel">
     <h2>Tür Auswahl</h2>
