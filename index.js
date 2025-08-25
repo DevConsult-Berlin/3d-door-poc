@@ -17,7 +17,8 @@ document.getElementById("passButton").addEventListener("click", myFunction);
 function myFunction() {
     const passwordField = document.getElementById("pass");
     const message = document.getElementById("message");
-    const password = passwordField.value;
+    const password = "1234";
+    // passwordField.value;
     if (password === "1234") {
         document.getElementById("controlPanel").style.display = "block";
         message.textContent = "";
@@ -107,7 +108,7 @@ function initScene() {
             }
         });
         gltf.scene.rotation.y = -Math.PI / 2;
-        gltf.scene.visible = true;
+        gltf.scene.visible = false;
     });
 
     loader.load("door2-1.glb", (gltf) => {
@@ -165,6 +166,10 @@ function initScene() {
     function toggleVisibility(obj) {
         if (typeof obj === "number") {
             doors.forEach((d, i) => {
+                if (d.visible) {
+                    d.visible = false;
+                    return;
+                }
                 d.visible = (obj === i);
             });
         } else {
@@ -213,10 +218,22 @@ function initScene() {
             }
         }
     };
+
+    const revealOnActive = {
+        showDoor: ["showHandle1", "showMitSchloss1", "showObSchloss", "showMittelStueck1"],
+
+        showDoor2: ["showHandle2", "showMitSchloss2", "showMittelStueck2"]
+    };
     Object.entries(toggleMap).forEach(([id, getTarget]) => {
         const el = document.getElementById(id);
         if (!el) return;
         el.addEventListener("click", () => {
+
+            document
+                .querySelectorAll("#controlPanel .toggle-btn.is-active")
+                .forEach(btn => btn.classList.remove("is-active"));
+            el.classList.toggle("is-active");
+
             const target = getTarget();
             if (typeof target === "function") {
                 target();
@@ -225,6 +242,20 @@ function initScene() {
             } else {
                 toggleVisibility(target);
             }
+
+            // Buttons nach ausgewählter Tür aus/ einblenden
+            const list = revealOnActive[id];
+
+            if (document.getElementById("showDoor").classList.contains("is-active")) {
+                revealOnActive["showDoor"].forEach((targetId) => document.getElementById(targetId).style.display = "block");
+                revealOnActive["showDoor2"].forEach((targetId) => document.getElementById(targetId).style.display = "none");
+            } else if (document.getElementById("showDoor2").classList.contains("is-active")) {
+                revealOnActive["showDoor"].forEach((targetId) => document.getElementById(targetId).style.display = "none");
+                revealOnActive["showDoor2"].forEach((targetId) => document.getElementById(targetId).style.display = "block");
+            } else {
+             
+            }
+
         });
     });
     const slider = document.getElementById("widthSlider");

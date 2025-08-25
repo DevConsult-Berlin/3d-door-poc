@@ -104,6 +104,11 @@
       margin-bottom: 8px;
     }
 
+    #controlPanel button.is-active {
+      transform: scale(0.97);
+      box-shadow: 0 0 20px rgba(102, 126, 234, 1);
+    }
+
     #controlPanel {
       display: none;
     }
@@ -129,22 +134,22 @@
     <h2>Tür Auswahl</h2>
     <div class="button-group">
       <strong>Tür Modelle</strong>
-      <button id="showDoor">Show Door (V3)</button>
-      <button id="showDoor2">Show Door (V4)</button>
+      <button id="showDoor" class="toggle-btn">Show Door (V3)</button>
+      <button id="showDoor2" class="toggle-btn">Show Door (V4)</button>
     </div>
     <div class="button-group">
       <strong>Klinke &amp; Handle</strong>
-      <button id="showHandle1">Show Klinke Master Door (V3)</button>
-      <button id="showHandle2">Show Klinke Master Door (V4)</button>
+      <button id="showHandle1" style="display:none;">Show Klinke Master Door (V3)</button>
+      <button id="showHandle2" style="display:none;">Show Klinke Master Door (V4)</button>
     </div>
     <div class="button-group">
       <strong>Sonstiges</strong>
       <button id="showPlane">Show Hauswand-Bild</button>
-      <button id="showMitSchloss1">Show Mittlere Schloß (V3)</button>
-      <button id="showMitSchloss2">Show Mittlere Schloß (V4)</button>
-      <button id="showObSchloss">Show Obere Schloß</button>
-      <button id="showMittelStueck1">Show Glass (V3)</button>
-      <button id="showMittelStueck2">Show Door Material (V4)</button>
+      <button id="showMitSchloss1" style="display:none;">Show Mittlere Schloß (V3)</button>
+      <button id="showMitSchloss2" style="display:none;">Show Mittlere Schloß (V4)</button>
+      <button id="showObSchloss" style="display:none;">Show Obere Schloß</button>
+      <button id="showMittelStueck1" style="display:none;">Show Glass (V3)</button>
+      <button id="showMittelStueck2" style="display:none;">Show Door Material (V4)</button>
     </div>
     <input type="color" id="colorPicker" value="#ff0000">
     <label for="colorPicker">Tür-Farbe auswählen</label>
