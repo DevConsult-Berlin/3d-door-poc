@@ -17,7 +17,7 @@ document.getElementById("passButton").addEventListener("click", myFunction);
 function myFunction() {
     const passwordField = document.getElementById("pass");
     const message = document.getElementById("message");
-    const password = "1234";
+    const password = passwordField.value;
     if (password === "1234") {
         document.getElementById("controlPanel").style.display = "block";
         message.textContent = "";
