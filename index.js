@@ -18,7 +18,6 @@ function myFunction() {
     const passwordField = document.getElementById("pass");
     const message = document.getElementById("message");
     const password = "1234";
-    // passwordField.value;
     if (password === "1234") {
         document.getElementById("controlPanel").style.display = "block";
         message.textContent = "";
@@ -166,10 +165,6 @@ function initScene() {
     function toggleVisibility(obj) {
         if (typeof obj === "number") {
             doors.forEach((d, i) => {
-                if (d.visible) {
-                    d.visible = false;
-                    return;
-                }
                 d.visible = (obj === i);
             });
         } else {
@@ -229,9 +224,12 @@ function initScene() {
         if (!el) return;
         el.addEventListener("click", () => {
 
-            document
+            if(el.classList.contains("toggle-btn")){
+                document
                 .querySelectorAll("#controlPanel .toggle-btn.is-active")
                 .forEach(btn => btn.classList.remove("is-active"));
+            }
+            
             el.classList.toggle("is-active");
 
             const target = getTarget();
@@ -244,18 +242,17 @@ function initScene() {
             }
 
             // Buttons nach ausgewählter Tür aus/ einblenden
-            const list = revealOnActive[id];
 
-            if (document.getElementById("showDoor").classList.contains("is-active")) {
-                revealOnActive["showDoor"].forEach((targetId) => document.getElementById(targetId).style.display = "block");
-                revealOnActive["showDoor2"].forEach((targetId) => document.getElementById(targetId).style.display = "none");
-            } else if (document.getElementById("showDoor2").classList.contains("is-active")) {
-                revealOnActive["showDoor"].forEach((targetId) => document.getElementById(targetId).style.display = "none");
-                revealOnActive["showDoor2"].forEach((targetId) => document.getElementById(targetId).style.display = "block");
-            } else {
-             
-            }
-
+            Object.keys(revealOnActive).forEach(key => {
+                if (key === id) {
+                    revealOnActive[key].forEach(id => document.getElementById(id).style.display = "block");
+                    Object.entries(revealOnActive).forEach(([door, ids]) => {
+                        if (door !== key) {
+                            ids.forEach(id => document.getElementById(id).style.display = "none");
+                        }
+                    })
+                }
+            })
         });
     });
     const slider = document.getElementById("widthSlider");
